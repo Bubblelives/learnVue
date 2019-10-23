@@ -27,7 +27,7 @@
             </label>
             <label for="">
                 Name：
-                <input type="text" class="form-control" v-model="name">
+                <input type="text" class="form-control" v-model="name" @keyup.enter="add">
             </label>
             <input type="button" value="添加" class="btn btn-primary" @click="add">
             <label for="">
@@ -44,8 +44,8 @@
             </tr>
             <tr v-for="list in search(key)" :key="list.id">
                 <td>{{list.id}}</td>
-                <td>{{list.name | msgFormat(1)}}</td>
-                <td>{{list.ctime}}</td>
+                <td>{{list.name | dataFormat}}</td>
+                <td>{{list.ctime|dateFormat('yyyy-MM-dd')}}</td>
                 <td><a href="" @click.prevent="del(list.id)">删除</a></td>
             </tr>
 
@@ -53,8 +53,49 @@
     </div>
 
     <script>
+        //全局时间过滤器
+         Vue.filter('dateFormat',function(dateS,partten){
+            var dt=new Date(dateS);
+            var y=dt.getFullYear();
+            var m =dt.getMonth()+1;
+            var d=dt.getDate();
+
+            if(partten && partten.toLowerCase()=='yyyy-MM-dd'){
+                return `${y}-${m}-${d}`;
+            }else{
+                var h =dt.getHours();
+                var m =dt.getMinutes();
+                var s=dt.getSeconds();
+                return `${y}-${m}-${d} ${h}:${m}:${s}`;
+            }
+            
+        })
         var v1 = new Vue({
             el: '#app',
+            beforeCreate(){//数据和方法都没有被初始化
+                console.log("beforeCreate!");
+            },
+            created(){      //数据和方法已被初始化
+                console.log("--create!");
+            },
+            beforeMount(){//模板编译完成，但没有渲染
+
+            },
+            mountd(){//模板编译完成且完成渲染，组件初始化完毕 
+
+            },
+            beforeUpdate(){ //数据更新，(界面)还未更新
+
+            },
+            updated(){  //数据更新。界面也被更新
+
+            },
+            beforeDestroy(){    //组件还未被销毁
+
+            },
+            destroyed(){    //组件完全被销毁
+
+            },
             data: {
                 id: "",
                 name: "",
@@ -62,19 +103,24 @@
                 lists: [{
                     id: 1,
                     name: '奔驰',
-                    ctime: new Date().toLocaleString()
+                    ctime: new Date()
                 }, {
                     id: 2,
                     name: '宝马',
-                    ctime: new Date().toLocaleString()
+                    ctime: new Date()
                 }]
+            },
+            filters:{   //局部过滤器(优先调用)
+                dataFormat:function(msg){
+                    return msg+1;
+                }
             },
             methods: {
                 add() {
                     var car = {
                         id: this.id,
                         name: this.name,
-                        ctime: new Date().toLocaleString()
+                        ctime: new Date()
                     };
                     this.lists.push(car);
                     this.name = '';
@@ -102,9 +148,8 @@
             }
 
         })
-        Vue.filter('msgFormat', function(name, arg) {
-            return name + arg;
-        })
+       
+       
     </script>
 </body>
 
