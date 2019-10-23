@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router@2.0.0/dist/vue-router.js"></script>
+    <!-- 新 Bootstrap 核心 CSS 文件 -->
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <div>
+            <label for="">
+                ID：
+                <input type="text" class="form-control" v-model="id">
+            </label>
+            <label for="">
+                Name：
+                <input type="text" class="form-control" v-model="name">
+            </label>
+            <input type="button" value="添加" class="btn btn-primary" @click="add">
+            <label for="">
+                搜索名称关键词：
+                <input type="text" class="form-control" v-model="key">
+            </label>
+        </div>
+        <table class="table">
+            <tr>
+                <td>id</td>
+                <td>Name</td>
+                <td>Time</td>
+                <td>操作</td>
+            </tr>
+            <tr v-for="list in search(key)" :key="list.id">
+                <td>{{list.id}}</td>
+                <td>{{list.name | msgFormat(1)}}</td>
+                <td>{{list.ctime}}</td>
+                <td><a href="" @click.prevent="del(list.id)">删除</a></td>
+            </tr>
+
+        </table>
+    </div>
+
+    <script>
+        var v1 = new Vue({
+            el: '#app',
+            data: {
+                id: "",
+                name: "",
+                key: "",
+                lists: [{
+                    id: 1,
+                    name: '奔驰',
+                    ctime: new Date().toLocaleString()
+                }, {
+                    id: 2,
+                    name: '宝马',
+                    ctime: new Date().toLocaleString()
+                }]
+            },
+            methods: {
+                add() {
+                    var car = {
+                        id: this.id,
+                        name: this.name,
+                        ctime: new Date().toLocaleString()
+                    };
+                    this.lists.push(car);
+                    this.name = '';
+                    this.id = '';
+                },
+                del(id) {
+                    this.lists.some((item, i) => {
+                        if (item.id == id) {
+                            this.lists.splice(i, 1);
+                            return true; //若执行，立刻终止后续循环
+                        }
+
+                    })
+                },
+                search(key) {
+                    var newList = [];
+                    this.lists.forEach(item => {
+                        if (item.name.includes(key)) { //ES6新方法includes()
+                            // if (item.name.indexOf(key) != -1) {
+                            newList.push(item);
+                        }
+                    });
+                    return newList;
+                }
+            }
+
+        })
+        Vue.filter('msgFormat', function(name, arg) {
+            return name + arg;
+        })
+    </script>
+</body>
+
+</html>
