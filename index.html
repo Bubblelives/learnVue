@@ -8,6 +8,7 @@
     <title>Document</title>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/vue-router@2.0.0/dist/vue-router.js"></script>
+    <link rel="stylesheet" href="./dist/main.css">
 </head>
 
 <body>
@@ -15,6 +16,12 @@
         <button @click="start">循环</button>
         <button @click="stop">停止</button>
         <p>{{msg}}</p>
+    </div>
+    <div id="wp">
+        webpack
+    </div>
+    <div id="scss">
+        scss
     </div>
 
     <script>
@@ -42,6 +49,7 @@
             }
         });
     </script>
+    <script src="./dist/index.js"></script>
 </body>
 
 </html>

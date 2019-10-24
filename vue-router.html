@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router@2.0.0/dist/vue-router.js"></script>
+    <style>
+        .view2 {
+            float: right;
+            background-color: aqua;
+        }
+        
+        .view3 {
+            position: fixed;
+            bottom: 0;
+            background-color: brown;
+        }
+        
+        .description {
+            margin-left: 100px;
+        }
+        
+        .downLoad {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .money {
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="t1">
+        <h1>Hello App!</h1>
+        <p v-if="r!=null">r:{{r}}</p>
+        <p v-if="r2!=null">r2:{{r2}}</p>
+        <p>
+            <router-link to="/tencent/1">腾讯</router-link>
+            <router-link to="/alibaba/2">阿里巴巴</router-link>
+            <router-link :to="{name:'baidu',params:{id3:3}}">百度</router-link>
+            <router-link to="/youku">优酷</router-link>
+        </p>
+        <router-view class="view1"></router-view>
+        <router-view class="view2" name="a"></router-view>
+        <router-view class="view3" name="b"></router-view>
+    </div>
+    <script>
+        const tencent = {
+            template: `<p>这里是腾讯--首页</p>`
+        };
+        const tencent2 = {
+            template: `
+                    <div class="inTencent" style="background:pink;">
+                        <p>腾讯游戏--</p>
+                        <router-link to="/tencent/1/dnf">DNF</router-link>
+                        <router-link to="/tencent/2/qqsg">QQ三国</router-link>
+                        <router-view class="description" name="description"></router-view>
+                        <router-view class="downLoad" name="download"></router-view>
+                        <router-view class="money" name="money"></router-view>
+                    </div>
+               `
+        };
+        const DNF = {
+            template: `<p>这里是腾讯--DNF</p>`
+        };
+        const qqsg = {
+            template: `<p>这里是腾讯--QQ三国</p>`
+        };
+        const alibaba = {
+            template: `<p>这里是阿里巴巴--{{$route.params.id2}}</p>`
+        };
+        const baidu = {
+            props: ['id3'],
+            template: `<p style="height:2000px;background-color:lightblue;">这里是百度--{{id3}}
+            </p>`
+        };
+        const youkuTudou = {
+            template: `<p>这里是优酷土豆</p>`
+        };
+        const home = {
+            template: `<p>这里是首页</p>`
+        }
+        const home2 = {
+            template: `<p>这里是首页2</p>`
+        }
+        const home3 = {
+            template: `<p>这里是首页3</p>`
+        }
+        const notFound = {
+            template: `<p>404</p>`
+        }
+        const routes = [{
+            path: '/',
+            components: {
+                default: home,
+                a: home2,
+                b: home3
+            }
+        }, {
+            path: '/tencent',
+            component: tencent
+        }, {
+            path: '/tencent/:id',
+            component: tencent2,
+            meta: {
+                title: '腾讯'
+            },
+            children: [{
+                path: "dnf",
+                meta: {
+                    title: '地下城与勇士'
+                },
+                components: {
+                    description: DNF,
+                    download: {
+
+                        template: `<span>下载游戏-></span>`
+                    },
+                    money: {
+                        props: ['id'],
+                        template: `<span>充值->{{id}}</span>`
+                    }
+                }
+            }, {
+                path: 'qqsg',
+                components: {
+                    description: qqsg
+                },
+                meta: {
+                    title: 'QQ三国'
+                },
+            }]
+        }, {
+            path: '/alibaba/:id2',
+            component: alibaba
+        }, {
+            path: '/baidu/:id3',
+            name: 'baidu',
+            component: baidu,
+            meta: {
+                title: '百度'
+            },
+            props: true
+        }, {
+            path: '/youku',
+            // redirect: '/youkuTudou'
+            redirect: {
+                name: 'youkuTudou'
+            },
+            meta: {
+                title: '优酷视频跳转'
+            }
+        }, {
+            path: '/youkuTudou',
+            name: 'youkuTudou',
+            component: youkuTudou,
+            meta: {
+                title: '优酷视频'
+            }
+        }, {
+            path: '*',
+            component: notFound
+        }];
+        const router = new VueRouter({
+            routes,
+            scrollBehavior(to, from, savedPosition) {
+                return new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        resolve({
+                            x: 10,
+                            y: 100
+                        })
+                    }, 500)
+                })
+            }
+        })
+        router.beforeEach((to, from, next) => {
+            //to是即将要进入的路由，from是即将离开的路由
+            window.document.title = to.meta.title;
+            next(); //必需
+        })
+        var vr1 = new Vue({
+            el: "#t1",
+            data: {},
+            router,
+            computed: {
+                r() {
+                    return this.$route.params.id
+                },
+                r2() {
+                    return this.$route.params.id2
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
